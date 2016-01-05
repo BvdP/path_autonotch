@@ -2,7 +2,7 @@
 	<_name>Curve autonotch</_name>
 	<id>be.fablab-leuven.inkscape.autonotch</id>
 	<dependency type="executable" location="extensions">inkex.py</dependency>
-	<dependency type="executable" location="extensions">curve_autonotch.py</dependency>
+	<dependency type="executable" location="extensions">path_autonotch.py</dependency>
 
 	<param name="unit" type="enum" _gui-text="Unit">
 		<_item value="mm">mm</_item>
@@ -21,7 +21,7 @@
 	<param name="tab_size" type="float" min="0.0" max="10000.0" _gui-text="Tab size (approximately)">10.0</param>
 	<param name="cut_dist" type="float" min="0.1" max="100.0" _gui-text="Cut distance">1.5</param>
 	<param name="cut_nr" type="int" min="1" max="100" _gui-text="Number of cuts">3</param>
-
+	<param name="curve_factor" type="float" min="0" max="1000" _gui-text="Curvature factor">2</param>
 	<effect>
 		<object-type>all</object-type>
 		<effects-menu>
@@ -29,6 +29,6 @@
 		</effects-menu>
 	</effect>
 	<script>
-		<command reldir="extensions" interpreter="python">curve_autonotch.py</command>
+		<command reldir="extensions" interpreter="python">path_autonotch.py</command>
 	</script>
 </inkscape-extension>
