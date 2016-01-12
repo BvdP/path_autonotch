@@ -19,9 +19,10 @@
 	<param name="thickness" type="float" min="1.0" max="100.0" _gui-text="Material thickness">3.0</param>
 	<param name="depth" type="float" min="0.0" max="10000.0" _gui-text="Depth (Y)">100.0</param>
 	<param name="tab_size" type="float" min="0.0" max="10000.0" _gui-text="Tab size (approximately)">10.0</param>
-	<param name="cut_dist" type="float" min="0.1" max="100.0" _gui-text="Cut distance">1.5</param>
-	<param name="cut_nr" type="int" min="1" max="100" _gui-text="Number of cuts">3</param>
+	<param name="cut_dist" type="float" min="0.1" max="100.0" _gui-text="Cut distance on curve of default diameter (see below)">1.5</param>
+	<param name="default_diameter" type="float" min="0" _gui-text="Default curve diameter">60</param>
 	<param name="curve_factor" type="float" min="0" max="1000" _gui-text="Curvature factor">2</param>
+	<param name="cut_nr" type="int" min="1" max="100" _gui-text="Number of cuts">3</param>
 	<effect>
 		<object-type>all</object-type>
 		<effects-menu>

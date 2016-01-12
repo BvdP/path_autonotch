@@ -15,6 +15,7 @@ class Autonotch(doc.Effect):
             ['tab_size', 'float', '10', 'Approximate tab for straight sections (tabs will be evenly spaced along the length of the edge)'],
             ['cut_dist', 'float', '2.0', 'Distance between cuts on the rounded corners. Note that this value will change slightly to evenly fill up the available space.'],
             ['cut_nr', 'int', '3', 'Number of cuts across the depth.'],
+            ['default_diameter', 'float', '60', 'Default diameter'],
             ['curve_factor', 'float', '2', 'Curvature factor']
         ]
         doc.Effect.__init__(self, options)
@@ -31,6 +32,16 @@ class Autonotch(doc.Effect):
         path_items = path_str.replace(',', ' ').split()
         path_items = [float(x) if not x.isalpha() else x for x in path_items]
         doc.errormsg(str(path_items))
+        i = 0
+        path_components = []
+        while i < len(path_items):
+            if not isinstance(path_items[i], float):
+                command = path_items[i]
+                nr_args = path_commands[command.lower()]
+                i += 1
+            path_components.append((command, path_items[i:i + nr_args]))
+            i += nr_args
+        doc.errormsg(str(path_components))
 
 
 # Create effect instance and apply it.
