@@ -53,11 +53,43 @@ class Autonotch(doc.Effect):
             i += nr_args
         doc.errormsg(str(path_components))
 
+        origin = doc.Coordinate(0, 0)
+        startpoint = origin
+        segments = []
         for pc in path_components:
-            pass
+            if pc[1]: # absolute
+                startpoint = origin
+            nr_args = len(pc[2])
+            if nr_args % 2 == 0: # turns out that an even number of arguments means a list of x,y coordinates
+                points = []
+                for i in range(nr_args // 2):
+                    points.append(doc.Coordinate(pc[2][2 * i], pc[2][2 * i + 1]))
+            else:
+                pass # TODO: handle special cases
+
+            points = [p + startpoint for p in points] # make all points absolute
+            #doc.errormsg(str(points))
+            if pc[0] == 'm':
+                pass    # nothin to do: startpoit gets set later on
+            if pc[0] == 'h':
+                pass
+            if pc[0] == 'l':
+                segments.append(doc.Line(startpoint, points[0]))
+            if pc[0] == 'c':
+                pts = [startpoint]
+                pts.extend(points)
+                segments.append(doc.BezierCurve(pts))
 
 
-
+            startpoint = points[-1]
+        for s in segments:
+            #doc.errormsg(str(s.points))
+            p = doc.Path()
+            p.move_to(s.points[0].Coordinate, True)
+            for pp in s.points[1:]:
+                p.line_to(pp.Coordinate, True)
+        root = self.document.getroot()
+        p.path(root, doc.default_style)
 
 # Create effect instance and apply it.
 effect = Autonotch()

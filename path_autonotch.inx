@@ -1,5 +1,5 @@
 <inkscape-extension>
-	<_name>Curve autonotch</_name>
+	<_name>Path autonotch</_name>
 	<id>be.fablab-leuven.inkscape.autonotch</id>
 	<dependency type="executable" location="extensions">inkex.py</dependency>
 	<dependency type="executable" location="extensions">path_autonotch.py</dependency>
