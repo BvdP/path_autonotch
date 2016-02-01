@@ -82,14 +82,14 @@ class Autonotch(doc.Effect):
 
 
             startpoint = points[-1]
+        root = self.document.getroot()
         for s in segments:
-            #doc.errormsg(str(s.points))
+            doc.errormsg(str(s.points))
             p = doc.Path()
             p.move_to(s.points[0].Coordinate, True)
             for pp in s.points[1:]:
                 p.line_to(pp.Coordinate, True)
-        root = self.document.getroot()
-        p.path(root, doc.default_style)
+            p.path(root, doc.default_style)
 
 # Create effect instance and apply it.
 effect = Autonotch()
