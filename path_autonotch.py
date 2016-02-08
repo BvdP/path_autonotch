@@ -70,7 +70,7 @@ class Autonotch(doc.Effect):
             points = [p + startpoint for p in points] # make all points absolute
             #doc.errormsg(str(points))
             if pc[0] == 'm':
-                pass    # nothin to do: startpoit gets set later on
+                pass    # nothin to do: startpoint gets set later on
             if pc[0] == 'h':
                 pass
             if pc[0] == 'l':
@@ -86,9 +86,9 @@ class Autonotch(doc.Effect):
         for s in segments:
             #doc.errormsg(str(s.points))
             p = doc.Path()
-            p.move_to(s.points[0].coord, True)
-            for pp in s.points[1:]:
-                p.line_to(pp.coord, True)
+            p.move_to(s.pathpoint_at_t(0).coord, True)
+            for dd in s.distances[1:]:
+                p.line_to(s.pathpoint_at_t(s.t_at_length(dd)).coord, True)
             p.path(root, doc.default_style)
 
 # Create effect instance and apply it.
