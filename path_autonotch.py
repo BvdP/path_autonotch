@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+from __future__ import division
 import Inkscape_helper.inkscape_helper as doc
 
 class Autonotch(doc.Effect):
@@ -86,8 +86,8 @@ class Autonotch(doc.Effect):
             #doc.errormsg(str(s.points))
             p = doc.Path()
             p.move_to(s.pathpoint_at_t(0).coord, True)
-            for dd in s.distances[1:]:
-                p.line_to(s.pathpoint_at_t(s.t_at_length(dd)).coord, True)
+            for t in range(11):
+                p.line_to(s.pathpoint_at_t(t/10).coord, True)
             p.path(root, doc.default_style)
 
 # Create effect instance and apply it.
