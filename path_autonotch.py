@@ -38,7 +38,11 @@ class Autonotch(doc.Effect):
         }
         path_str = ''
         for name, obj in self.selected.iteritems():
-            path_str += obj.get('d') # all the interesting stuff for SVG paths is in the 'd' attribute
+            d = obj.get('d') # all the interesting stuff for SVG paths is in the 'd' attribute
+            if d == None:
+                doc.errormsg('Error: Selected object is not a path.')
+                return
+            path_str += d
 
         path_items = path_str.replace(',', ' ').split()
         path_items = [float(x) if not x.isalpha() else x for x in path_items]
@@ -63,24 +67,41 @@ class Autonotch(doc.Effect):
                 points = []
                 for i in range(nr_args // 2):
                     points.append(doc.Coordinate(pc[2][2 * i], pc[2][2 * i + 1]))
-            else:
-                pass # TODO: handle special cases
+            else: # elliptic arc
+                points = [doc.Coordinate(pc[2][-2], pc[2][-1])] # only one coordinate for an arc
 
             points = [p + offset for p in points] # make all points absolute
-            #doc.errormsg(str(points))
+            if len(segments) == 0:
+                initial_point = points[0]
+
             if pc[0] == 'm':
                 pass    # nothin to do: endpoint gets set later on
             if pc[0] == 'h':
-                pass
+                to = doc.Coordinate(pc[2][0] + offset, 0)
+                segments.append(doc.Line(endpoint, to))
+            if pc[0] == 'v':
+                to = doc.Coordinate(0, pc[2][0] + offset)
+                segments.append(doc.Line(endpoint, to))
             if pc[0] == 'l':
                 segments.append(doc.Line(endpoint, points[0]))
-            if pc[0] == 'c':
+
+            # note: up to now only tested with 'c', not sure if Inkscape generates the others
+            if pc[0] in ('c', 'q', 's', 't') :
                 pts = [endpoint]
+                if pc[0] in ('s', 't') :
+                    pts.extend(endpoint - last_control) # invert last Bezier control point
                 pts.extend(points)
                 segments.append(doc.BezierCurve(pts))
+                last_control = points[-2]
+            if pc[0] == 'a':
+                rx, ry, x_rot, large_arc, sweep, x, y = pc[2]
 
+                segments.append(doc.EllipticArc(endpoint, points[0], rx, ry, x_rot, sweep =='1', large_arc=='1'))
+            if pc[0] == 'z':
+                segments.append(doc.Line(endpoint, initial_point))
+            else:
+                endpoint = points[-1]
 
-            endpoint = points[-1]
         root = self.document.getroot()
         for s in segments:
             #doc.errormsg(str(s.points))

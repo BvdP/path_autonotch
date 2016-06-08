@@ -1,0 +1,1 @@
+cp path_autonotch.* ..
