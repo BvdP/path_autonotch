@@ -55,7 +55,7 @@ class Autonotch(doc.Effect):
                 i += 1
             path_components.append((command.lower(), command.isupper(), path_items[i:i + nr_args]))
             i += nr_args
-        doc.errormsg(str(path_components))
+        #doc.errormsg(str(path_components))
 
         origin = doc.Coordinate(0, 0)
         endpoint = origin
