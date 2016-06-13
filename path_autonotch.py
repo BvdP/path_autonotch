@@ -96,8 +96,7 @@ class Autonotch(doc.Effect):
                 last_control = points[-2]
             if pc[0] == 'a':
                 rx, ry, x_rot, large_arc, sweep, x, y = pc[2]
-
-                segments.append(doc.EllipticArc(endpoint, points[0], rx, ry, x_rot, sweep =='1', large_arc=='1'))
+                segments.append(doc.EllipticArc(endpoint, points[0], rx, ry, x_rot, sweep ==1.0, large_arc==1.0))
             if pc[0] == 'z':
                 if endpoint != initial_point:
                     segments.append(doc.Line(endpoint, initial_point))
