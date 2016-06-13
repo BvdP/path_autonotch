@@ -59,6 +59,7 @@ class Autonotch(doc.Effect):
 
         origin = doc.Coordinate(0, 0)
         endpoint = origin
+        initial_point = None
         segments = []
         for pc in path_components:
             offset = origin if pc[1] else endpoint
@@ -71,7 +72,7 @@ class Autonotch(doc.Effect):
                 points = [doc.Coordinate(pc[2][-2], pc[2][-1])] # only one coordinate for an arc
 
             points = [p + offset for p in points] # make all points absolute
-            if len(segments) == 0:
+            if initial_point is None:
                 initial_point = points[0]
 
             if pc[0] == 'm':
