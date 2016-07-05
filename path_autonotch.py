@@ -20,6 +20,18 @@ class Autonotch(doc.Effect):
         ]
         doc.Effect.__init__(self, options)
 
+    def transform(self, coord):
+        """"
+        applies SVG transform, multiply by
+        [a c e]
+        [b d f]
+        [0 0 1]
+        """
+        pp = self.transform_parameters
+        return doc.Coordinate(
+            pp[0] * coord.x + pp[2] * coord.y + pp[4],
+            pp[1] * coord.x + pp[3] * coord.y + pp[5])
+
     def effect(self):
         """
         Blah.
@@ -36,13 +48,42 @@ class Autonotch(doc.Effect):
             'a':7, # elliptical arc to
             'z':0  # close path
         }
-        path_str = ''
+
         for name, obj in self.selected.iteritems():
+            path_str = ''
             d = obj.get('d') # all the interesting stuff for SVG paths is in the 'd' attribute
             if d == None:
                 doc.errormsg('Error: Selected object is not a path.')
                 return
             path_str += d
+            tr = obj.get('transform') # TODO: transform can also apply to parent elements
+            if tr is not None:
+                tr_list = [i for i in tr.split(')') if len(i) > 0]
+                for itm in tr_list: # TODO: allow for several transformations in succession
+                    transform, params = itm.split('(')
+                    params = [float(p) for p in params.replace(',', ' ').split()]
+                    if transform == 'matrix':
+                        self.transform_parameters = params
+                    elif transform == 'translate': # tx, [ty]
+                        tx = params[0]
+                        ty = params[1] if len(params) > 1 else 0
+                        self.transform_parameters = [1, 0, 0, 1, tx, ty]
+                    elif transform == 'rotate': # angle [cx, cy] if cx,cy do: translate(<cx>, <cy>) rotate(<rotate-angle>) translate(-<cx>, -<cy>)
+                        rad = params[0] / 180 * pi
+                        self.transform_parameters = [cos(rad), sin(rad), -sin(rad), cos(rad),0, 0]
+                    elif transform == 'scale': # sx, [sy]
+                        sx = params[0]
+                        sy = params[1] if len(params) > 1 else sx
+                        self.transform_parameters = [sx, 0, 0, sy, 0, 0]
+                    elif transform == 'skewX':
+                        rad = params[0] / 180 * pi
+                        self.transform_parameters = [1, 0, tan(rad), 1, 0, 0]
+                    elif transform == 'skewY':
+                        rad = params[0] / 180 * pi
+                        self.transform_parameters = [1, tan(rad), 0, 1, 0, 0]
+                doc.errormsg(str(self.transform_parameters))
+            else:
+                self.transform_parameters = [1, 0, 0, 1, 0, 0]
 
         path_items = path_str.replace(',', ' ').split()
         path_items = [float(x) if not x.isalpha() else x for x in path_items]
@@ -107,9 +148,9 @@ class Autonotch(doc.Effect):
         for s in segments:
             #doc.errormsg(str(s.points))
             p = doc.Path()
-            p.move_to(s.pathpoint_at_t(0).coord, True)
+            p.move_to(self.transform(s.pathpoint_at_t(0).coord), True)
             for t in range(11):
-                p.line_to(s.pathpoint_at_t(t/10).coord, True)
+                p.line_to(self.transform(s.pathpoint_at_t(t/10).coord), True)
             p.path(root, doc.default_style)
 
 # Create effect instance and apply it.
